@@ -1,0 +1,104 @@
+
+GPX file overview
+-------------------------------------------
+
+```{r 'Find Addresses',echo=FALSE}
+Nitems <- dim(crd.gpx)[1]
+#First address identified:
+ads.beg <- NULL;nbeg <- 1
+while(!is.character(ads.beg)){ads.beg <- try(reverseGeoCode(crd.gpx[nbeg,2:1]));nbeg <- nbeg+1}
+#Last address identified
+ads.end <- NULL;nend <- Nitems
+while(!is.character(ads.end)){ads.end <- try(reverseGeoCode(crd.gpx[nend,2:1]));nend <- nend-1}
+SpltAds <- unlist(strsplit(ads.beg,", "))
+CNTRY <- SpltAds[length(SpltAds)]
+```
+The track starts in `r CNTRY`
+=================================
+
+The **first address** found is `r paste("Point ",nbeg-1,": ",ads.beg)`.  
+The **last address** found is `r paste("Point ",nend+1,": ",ads.end)`.  
+The trip **strated** on `r format(min(as.POSIXct(pts$time)),"%d %B %Y %R")` and **ended** on `r format(max(as.POSIXct(pts$time)),"%d %B %Y %R")`.
+
+```{r 'SPEED',echo=FALSE}
+### LOOP FOR COMPUTING THE SPEED BETWEEN TWO POINTS
+## The delay between a point and the next one are computed in 'res'
+## Euclidian distance between a point and the next one are computed in 'eucl'
+res  <- eucl <- NULL
+res[1]  <- eucl[1] <- NA
+for(i in 1:(length(pts$time)-1)){
+  res[i+1] <- as.numeric(as.POSIXct(pts$time)[i+1] - as.POSIXct(pts$time)[i])
+  eucl[i+1] <- spDists(matrix(pts.crd[i+1,],ncol=2),matrix(pts.crd[i,],ncol=2))
+}
+### SPEED in km/h
+VIT <- round(eucl*3.6/res,2)
+## Get rid of artifacts of high speed ( > 250 km/h) due to bad sattelite coverage
+VIT[VIT>250] <- NA
+#### Define colors
+Ncut <- as.integer(sqrt(length(pts)))
+COL.VIT <- cut(VIT,Ncut,labels=heat.colors(Ncut))
+
+```
+
+MAPS
+================
+
+Interactive map with Leaflet
+-------------------------------   
+
+```{r 'Leaflet map',echo=F, warning=F, message=F}
+### Leaflet
+crd.POP <- rbind(crd.gpx[nbeg-1,],crd.gpx[nend+1,])
+POP <- c(paste("Point",nbeg-1,"(START):",ads.beg,sep=" "),paste("Point",nend+1,"(END):",ads.end,sep=" "))
+leaflet() %>% addTiles() %>% addProviderTiles("OpenMapSurfer.Roads", group = "OpenMapSurfer.Roads") %>%
+  addProviderTiles("OpenTopoMap", group = "MapQuestOpen.Aerial") %>%
+  addProviderTiles("MapQuestOpen.Aerial", group = "MapQuestOpen.Aerial") %>%
+  addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red') %>%
+  addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%
+  addLayersControl(baseGroups = c( "OpenTopoMap","MapQuestOpen.Aerial", "OpenMapSurfer.Roads"))
+#createWidget("leaflet",MyMap,width=800,height = 800)
+```
+
+Static maps with RgoogleMaps
+-------------------------------   
+
+**Orthophoto background**   
+
+```{r 'Plot map3',echo=FALSE}
+### Detail
+PlotOnStaticMap(MyMap, lat = crd.gpx$Lat, lon = crd.gpx$Long, size = c(640,640),
+                cex = 1, pch = 20, col = as.character(COL.VIT), add = F)
+```
+
+
+**Terrain background (wide frame)**   
+```{r 'Plot map1',echo=FALSE}
+### Main on terrain
+PlotOnStaticMap(MyMapWideTer, lat = crd.gpx$Lat, lon = crd.gpx$Long, size = c(640,640),
+                cex = 1, pch = 20, col = as.character(COL.VIT), add = F)
+```
+
+**Google hybrid background (wide frame)**
+```{r 'Plot map2',echo=FALSE,eval=T}
+### Main on Hybrid
+PlotOnStaticMap(MyMapWideHyb, lat = crd.gpx$Lat, lon = crd.gpx$Long, size = c(640,640),
+                cex = 1, pch = 20, col = as.character(COL.VIT), add = F)
+```
+
+
+Details of speed
+-----------------------
+
+```{r 'Draw histrogram and plot',echo=FALSE}
+cpar <- par(bg="grey85")
+plot(pts$ele,pch=".",cex=as.numeric(as.character(cut(VIT,5,labels=5:9)))
+     ,main="Elevation of points (size and color representing 'speed')",
+     col=as.character(COL.VIT),sub=filename,
+     ylab="Altitude (m)")
+summary(VIT)
+
+hist(VIT,length(levels(COL.VIT)),main="Distribution of 'speed' (in km/h)"
+     ,sub=filename,col=as.character(levels(COL.VIT))) 
+par(cpar)
+
+```
