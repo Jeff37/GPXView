@@ -55,8 +55,7 @@ leaflet() %>% addTiles() %>% addProviderTiles("OpenMapSurfer.Roads", group = "Op
   addProviderTiles("MapBox", group = "MapBox") %>%
   addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red') %>%
   addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%
-  addLayersControl(baseGroups = c( "OpenTopoMap","HERE.satelliteDay", "OpenMapSurfer.Roads"))
-#createWidget("leaflet",MyMap,width=800,height = 800)
+  addLayersControl(baseGroups = c( "OpenTopoMap","MapBox", "OpenMapSurfer.Roads"))
 ```
 
 Static maps with RgoogleMaps
