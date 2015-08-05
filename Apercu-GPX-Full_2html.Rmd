@@ -52,7 +52,7 @@ crd.POP <- rbind(crd.gpx[nbeg-1,],crd.gpx[nend+1,])
 POP <- c(paste("Point",nbeg-1,"(START):",ads.beg,sep=" "),paste("Point",nend+1,"(END):",ads.end,sep=" "))
 leaflet() %>% addTiles() %>% addProviderTiles("OpenMapSurfer.Roads", group = "OpenMapSurfer.Roads") %>%
   addProviderTiles("OpenTopoMap", group = "MapQuestOpen.Aerial") %>%
-  addProviderTiles("HERE.satelliteDay", group = "HERE.satelliteDay") %>%
+  addProviderTiles("MapBox", group = "MapBox") %>%
   addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red') %>%
   addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%
   addLayersControl(baseGroups = c( "OpenTopoMap","HERE.satelliteDay", "OpenMapSurfer.Roads"))
