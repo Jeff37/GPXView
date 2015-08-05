@@ -26,10 +26,8 @@ reverseGeoCode <- function(latlng) {
 ## One or more .gpx file names can be provided as text vector
 ## * "option" should be specified wheter to output only the .png map, the html report (with leaflet interactive map) or both
 GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both")){
-  #################################################################################
-  ### Overview of the content of a .gpx (layer = track) on a googlemaps background
   setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG") ### On my laptop
-  ## List out .pgx files which were not yet processed
+  ## List of the .gpx files which were not yet processed
   GPXfile.list <- list.files()[1:(length(list.files())-2)]
   PNGfile.list <- list.files(paste(getwd(),"/OutputPNG",sep=""))
   comp <- substring(PNGfile.list[-length(PNGfile.list)],1,25)
@@ -65,9 +63,9 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
     
     setwd('/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG/Output_html/')
     # Note!!: knit2html is not working with leaflet widget creation. The widget is not visible in the html page, only the message "!–html_preserve–"
-    ### #knit2html(input='/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/Apercu-GPX-Full_2html.Rmd',output=GPXfile,envir=globalenv()) 
+    # NOT RUN #knit2html(input='/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/Apercu-GPX-Full_2html.Rmd',output=GPXfile,envir=globalenv()) 
     ## The solution is explained here: http://stackoverflow.com/questions/28585238/r-rendering-html-widget-in-external-browser
-    rmarkdown::render(input='/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/Apercu-GPX-Full_2html.Rmd'
+    rmarkdown::render(input='/home/jf/R/GitHub/GPXView/Apercu-GPX-Full_2html.Rmd'
                       ,output_dir='.'
                       ,output_file=paste(GPXfile,'.html',sep="")
                       ,envir=globalenv())
