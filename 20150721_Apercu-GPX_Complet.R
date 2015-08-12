@@ -2,7 +2,7 @@ rm(list=ls())
 library(RgoogleMaps)
 library(rgdal)
 library(knitr)
-library(leaflet)#
+library(leaflet)
 
 # The function 'reverseGeoCode' is taken from J. Aswani post on http://allthingsr.blogspot.com/2012/03/geocode-and-reverse-geocode-your-data.html
 # Ref: J. Aswani, “All Things R: Geocode and reverse geocode your data using, R, JSON and Google Maps’ Geocoding API,” All Things R, 20-Mar-2012. .
@@ -21,16 +21,16 @@ reverseGeoCode <- function(latlng) {
   return (address)
 }
 
-#### The function to call GPX_Overview
-## * If "GPXname=NULL" the .gpx files processed are those which are not yet as .png overview (the names are collected in 'AF')
+### The function 'GPX_Overview()':
+## * If "GPXname=NULL" the .gpx files processed are those which do not yet exist as .png overview (the names are collected in 'AF')
 ## One or more .gpx file names can be provided as text vector
-## * "option" should be specified wheter to output only the .png map, the html report (with leaflet interactive map) or both
+## * "option" should be specified whether to output only the .png map, to output the html report (with leaflet interactive map) or both
 GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both")){
   setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG") ### On my laptop
   ## List of the .gpx files which were not yet processed
-  GPXfile.list <- list.files()[1:(length(list.files())-2)]
-  PNGfile.list <- list.files(paste(getwd(),"/OutputPNG",sep=""))
-  comp <- substring(PNGfile.list[-length(PNGfile.list)],1,25)
+  GPXfile.list <- list.files()[grep(".gpx",list.files())]
+  PNGfile.list <- list.files("./OutputPNG")[grep(".png",list.files("./OutputPNG"))]
+  comp <- substring(PNGfile.list,1,25) ## Adapt substring start and stop to your .gpx name
   AF <- GPXfile.list[is.na(match(GPXfile.list,comp))]
   if(!is.null(GPXname)){AF <- GPXname} ## Choose .gpx files to process
   ### sapply the script on each .gpx file
@@ -53,6 +53,20 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
                         , maptype = "hybrid",size = c(640, 640))
   Ncut <<- as.integer(sqrt(length(pts)))
   COL <<- cut(1:length(pts),Ncut,labels=heat.colors(Ncut))
+  
+  ### Find the first identified address to get country name (used in naming the .png output)
+  ads.beg <- NULL; nbeg <- 1
+  while(!is.character(ads.beg)){ads.beg <- try(reverseGeoCode(crd.gpx[nbeg,2:1]))
+  nbeg <- nbeg+1}
+  SpltAds <- unlist(strsplit(ads.beg,", "))
+  CNTRY <<- SpltAds[length(SpltAds)]
+  # Simple .png output of the track on google hybrid background
+  if(option=="SimplePNG" | option=="both"){
+    png(paste(getwd(),"/OutputPNG/",GPXfile,"_",CNTRY, ".png",sep="")
+        ,width=800,height=800)
+    PlotOnStaticMap(MyMap, lat = crd.gpx$Lat, lon = crd.gpx$Long, size = c(640,640),
+                    cex = 1, pch = 20, col = as.character(COL), add = F)
+    dev.off()}
   ### Call .Rmd for knitting into .html
   if(option=="htmlReport" | option=="both"){
     MyMapWideHyb <<- GetMap.bbox(bb.w$lonR, bb.w$latR, destfile =
@@ -71,19 +85,6 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
                       ,envir=globalenv())
     setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG")
   }
-  ### Find the first identified address to get country name (used in naming the .png output)
-  ads.beg <- NULL;nbeg <- 1
-  while(!is.character(ads.beg)){ads.beg <- try(reverseGeoCode(crd.gpx[nbeg,2:1]))
-  nbeg <- nbeg+1}
-  SpltAds <- unlist(strsplit(ads.beg,", "))
-  CNTRY <- SpltAds[length(SpltAds)]
-  # Simple .png output of the track on google hybrid background
-  if(option=="SimplePNG" | option=="both"){
-    png(paste(getwd(),"/OutputPNG/",GPXfile,"_",CNTRY, ".png",sep="")
-        ,width=800,height=800)
-    PlotOnStaticMap(MyMap, lat = crd.gpx$Lat, lon = crd.gpx$Long, size = c(640,640),
-                    cex = 1, pch = 20, col = as.character(COL), add = F)
-    dev.off()}
   })
 }
 

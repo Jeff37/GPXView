@@ -10,10 +10,8 @@ while(!is.character(ads.beg)){ads.beg <- try(reverseGeoCode(crd.gpx[nbeg,2:1]));
 #Last address identified
 ads.end <- NULL;nend <- Nitems
 while(!is.character(ads.end)){ads.end <- try(reverseGeoCode(crd.gpx[nend,2:1]));nend <- nend-1}
-SpltAds <- unlist(strsplit(ads.beg,", "))
-CNTRY <- SpltAds[length(SpltAds)]
 ```
-The track starts in `r CNTRY`
+The track contains `r length(pts)` points and starts in `r CNTRY`
 =================================
 
 The **first address** found is `r paste("Point ",nbeg-1,": ",ads.beg)`.  
@@ -50,12 +48,9 @@ Interactive map with Leaflet
 ### Leaflet
 crd.POP <- rbind(crd.gpx[nbeg-1,],crd.gpx[nend+1,])
 POP <- c(paste("Point",nbeg-1,"(START):",ads.beg,sep=" "),paste("Point",nend+1,"(END):",ads.end,sep=" "))
-leaflet() %>% addTiles() %>% addProviderTiles("OpenMapSurfer.Roads", group = "OpenMapSurfer.Roads") %>%
-  addProviderTiles("OpenTopoMap", group = "MapQuestOpen.Aerial") %>%
-  addProviderTiles("MapBox", group = "MapBox") %>%
-  addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red') %>%
-  addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%
-  addLayersControl(baseGroups = c( "OpenTopoMap","MapBox", "OpenMapSurfer.Roads"))
+# Trick to keep my MapBox token and MapID for myself ;-)
+source("/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/MyMapID_and_Token.R") # Trick to keep my MapBox token and MapID for myself ;-)
+leaflet() %>% addTiles(MyMapID_and_Token,group="MyMapbox") %>% addTiles(group="OSM") %>% addProviderTiles("OpenMapSurfer.Roads", group = "OpenMapSurfer.Roads") %>% addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red') %>% addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%   addLayersControl(baseGroups = c("MyMapBox","OSM","OpenMapSurfer.Roads"))
 ```
 
 Static maps with RgoogleMaps
