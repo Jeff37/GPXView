@@ -81,7 +81,7 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
     ## The solution is explained here: http://stackoverflow.com/questions/28585238/r-rendering-html-widget-in-external-browser
     rmarkdown::render(input='/home/jf/R/GitHub/GPXView/Apercu-GPX-Full_2html.Rmd'
                       ,output_dir='.'
-                      ,output_file=paste(GPXfile,'.html',sep="")
+                      ,output_file=paste(GPXfile,'_',CNTRY,'.html',sep="")
                       ,envir=globalenv())
     setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG")
   }
@@ -92,6 +92,7 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
 
 GPX_Overview(option="both")
 GPX_Overview(option="htmlReport")
-GPX_Overview(GPXname="2014-06-05 @ 10-36-14.gpx",option="htmlReport")
+GPX_Overview(GPXname="2015-08-26 @ 11-31-59.gpx",option="htmlReport") ## 
+
 GPX_Overview(GPXname=Files2View,option="both")
 

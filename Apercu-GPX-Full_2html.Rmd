@@ -16,7 +16,7 @@ The track contains `r length(pts)` points and starts in `r CNTRY`
 
 The **first address** found is `r paste("Point ",nbeg-1,": ",ads.beg)`.  
 The **last address** found is `r paste("Point ",nend+1,": ",ads.end)`.  
-The trip **strated** on `r format(min(as.POSIXct(pts$time)),"%d %B %Y %R")` and **ended** on `r format(max(as.POSIXct(pts$time)),"%d %B %Y %R")`.
+The trip **strated** on `r format(min(as.POSIXct(pts$time)),"%d %B %Y %R")` and **ended** on `r format(max(as.POSIXct(pts$time)),"%d %B %Y %R")` GMT.
 
 ```{r 'SPEED',echo=FALSE}
 ### LOOP FOR COMPUTING THE SPEED BETWEEN TWO POINTS
