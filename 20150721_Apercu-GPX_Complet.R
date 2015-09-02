@@ -88,11 +88,11 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
   })
 }
 
-#Files2View <- c("2014-08-27 @ 18-16-37.gpx","2014-09-01 @ 23-10-49.gpx") # Some names
+#Files2View <- c("2013-05-14 @ 18-13-41.gpx","2014-09-07 @ 01-12-02.gpx") # Some names
 
 GPX_Overview(option="both")
 GPX_Overview(option="htmlReport")
 GPX_Overview(GPXname="2015-08-26 @ 11-31-59.gpx",option="htmlReport") ## 
 
-GPX_Overview(GPXname=Files2View,option="both")
+GPX_Overview(GPXname=Files2View,option="htmlReport")
 
