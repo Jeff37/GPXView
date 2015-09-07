@@ -19,15 +19,13 @@ The **last address** found is `r paste("Point ",nend+1,": ",ads.end)`.
 The trip **strated** on `r format(min(as.POSIXct(pts$time)),"%d %B %Y %R")` and **ended** on `r format(max(as.POSIXct(pts$time)),"%d %B %Y %R")` GMT.
 
 ```{r 'SPEED',echo=FALSE}
-### LOOP FOR COMPUTING THE SPEED BETWEEN TWO POINTS
-## The delay between a point and the next one are computed in 'res'
-## Euclidian distance between a point and the next one are computed in 'eucl'
-res  <- eucl <- NULL
-res[1]  <- eucl[1] <- NA
-for(i in 1:(length(pts$time)-1)){
-  res[i+1] <- as.numeric(as.POSIXct(pts$time)[i+1] - as.POSIXct(pts$time)[i])
-  eucl[i+1] <- spDists(matrix(pts.crd[i+1,],ncol=2),matrix(pts.crd[i,],ncol=2))
-}
+### More efficient way to compute speed (thank you Gilles!)
+res <- as.POSIXct(pts$time)
+res <- res[-1] - res[-length(res)] 
+res <- as.double(res, units = "secs")
+## Function to compute Euclidian distance
+euclid <- function(pt1, pt2) { (((pt2[,1]-pt1[,1])^2) + ((pt2[,2]-pt1[,2])^2))^0.5}
+eucl <- euclid(pts.crd[-1,], pts.crd[-nrow(pts.crd),])
 ### SPEED in km/h
 VIT <- round(eucl*3.6/res,2)
 ## Get rid of artifacts of high speed ( > 250 km/h) due to bad sattelite coverage

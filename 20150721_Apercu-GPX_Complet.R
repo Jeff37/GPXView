@@ -28,7 +28,7 @@ reverseGeoCode <- function(latlng) {
 GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both")){
   setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG") ### On my laptop
   ## List of the .gpx files which were not yet processed
-  GPXfile.list <- list.files()[grep(".gpx",list.files())]
+  GPXfile.list <- list.files(, pattern = "\\.gpx$")
   PNGfile.list <- list.files("./OutputPNG")[grep(".png",list.files("./OutputPNG"))]
   comp <- substring(PNGfile.list,1,25) ## Adapt substring start and stop to your .gpx name
   AF <- GPXfile.list[is.na(match(GPXfile.list,comp))]
@@ -92,7 +92,8 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
 
 GPX_Overview(option="both")
 GPX_Overview(option="htmlReport")
-GPX_Overview(GPXname="2015-08-26 @ 11-31-59.gpx",option="htmlReport") ## 
+GPX_Overview(GPXname="2013-05-14 @ 18-13-41.gpx",option="both") ## 
+GPX_Overview(GPXname="2014-09-07 @ 01-12-02.gpx",option="SimplePNG") ## 
 
 GPX_Overview(GPXname=Files2View,option="htmlReport")
 
