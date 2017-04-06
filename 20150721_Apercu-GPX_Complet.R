@@ -26,11 +26,13 @@ reverseGeoCode <- function(latlng) {
 ## One or more .gpx file names can be provided as text vector
 ## * "option" should be specified whether to output only the .png map, to output the html report (with leaflet interactive map) or both
 GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both")){
-  setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG") ### On my laptop
+  setwd("/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG") ### On my laptop
   ## List of the .gpx files which were not yet processed
-  GPXfile.list <- list.files(, pattern = "\\.gpx$")
-  PNGfile.list <- list.files("./OutputPNG")[grep(".png",list.files("./OutputPNG"))]
-  comp <- substring(PNGfile.list,1,25) ## Adapt substring start and stop to your .gpx name
+  GPXfile.list <- list.files(".", pattern = "\\.gpx$")
+#  PNGfile.list <- list.files("./OutputPNG")[grep(".png",list.files("./OutputPNG"))]
+  PNGfile.list <- list.files("./OutputPNG", pattern= "\\.png$")
+#  comp <- substring(PNGfile.list,1,25) ## Adapt substring start and stop to your .gpx name
+  comp <- paste0(sapply(strsplit(PNGfile.list, ".gpx_"), function(x) x[[1]]),".gpx")
   AF <- GPXfile.list[is.na(match(GPXfile.list,comp))]
   if(!is.null(GPXname)){AF <- GPXname} ## Choose .gpx files to process
   ### sapply the script on each .gpx file
@@ -83,17 +85,21 @@ GPX_Overview <- function(GPXname=NULL,option=c("SimplePNG","htmlReport","both"))
                       ,output_dir='.'
                       ,output_file=paste(GPXfile,'_',CNTRY,'.html',sep="")
                       ,envir=globalenv())
-    setwd("/home/jf/Dropbox/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG")
+    setwd("/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG")
   }
   })
 }
 
-#Files2View <- c("2013-05-14 @ 18-13-41.gpx","2014-09-07 @ 01-12-02.gpx") # Some names
+list.files("/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/GPX2PNG", pattern = ".gpx")
 
 GPX_Overview(option="both")
-GPX_Overview(option="htmlReport")
-GPX_Overview(GPXname="2013-05-14 @ 18-13-41.gpx",option="both") ## 
-GPX_Overview(GPXname="2014-09-07 @ 01-12-02.gpx",option="SimplePNG") ## 
+GPX_Overview(option="SimplePNG")
+GPX_Overview(GPXname="2014-02-xx_nietoperze.gpx",option="both") ## 
+GPX_Overview(GPXname="20170330112918.gpx",option="htmlReport") ## ?????????????
+GPX_Overview(GPXname="20170330112918.gpx",option="SimplePNG") ## 
 
+
+Files2View <- c("20170405170033.gpx",
+                "20170405172945.gpx") # Some names
 GPX_Overview(GPXname=Files2View,option="htmlReport")
 

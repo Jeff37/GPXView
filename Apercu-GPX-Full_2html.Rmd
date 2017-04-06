@@ -28,8 +28,8 @@ euclid <- function(pt1, pt2) { (((pt2[,1]-pt1[,1])^2) + ((pt2[,2]-pt1[,2])^2))^0
 eucl <- euclid(pts.crd[-1,], pts.crd[-nrow(pts.crd),])
 ### SPEED in km/h
 VIT <- round(eucl*3.6/res,2)
-## Get rid of artifacts of high speed ( > 250 km/h) due to bad sattelite coverage
-VIT[VIT>250] <- NA
+## Get rid of artifacts of high speed ( > 350 km/h) due to bad sattelite coverage
+VIT[VIT>350] <- NA
 #### Define colors
 Ncut <- as.integer(sqrt(length(pts)))
 COL.VIT <- cut(VIT,Ncut,labels=heat.colors(Ncut))
@@ -46,10 +46,17 @@ Interactive map with Leaflet
 ### Leaflet
 crd.POP <- rbind(crd.gpx[nbeg-1,],crd.gpx[nend+1,])
 POP <- c(paste("Point",nbeg-1,"(START):",ads.beg,sep=" "),paste("Point",nend+1,"(END):",ads.end,sep=" "))
+POPcirc <- paste0("Point ",rownames(crd.gpx)," ; (Time: ",pts$time,")")
 # Trick to keep my MapBox token and MapID for myself ;-)
 source("/home/jf/Dropbox (CARAH)/_Carto⁄LIFE-ELIA[dropBox]/Fichiers GPX/MyMapID_and_Token.R") # Trick to keep my MapBox token and MapID for myself ;-)
-leaflet() %>% addTiles(MyMapID_and_Token,group="MyMapbox") %>% addTiles(group="OSM") %>% addProviderTiles("OpenMapSurfer.Roads", group = "OpenMapSurfer.Roads") %>% addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red') %>% addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%   addLayersControl(baseGroups = c("MyMapBox","OSM","OpenMapSurfer.Roads"))
+leaflet() %>% addTiles(MyMapID_and_Token,group="MyMapbox") %>% addTiles(group="OSM") %>%
+  addProviderTiles("OpenMapSurfer.Roads", group = "OpenMapSurfer.Roads") %>%
+  addCircles(crd.gpx[,1],crd.gpx[,2], radius = 5,opacity=0.8,col='red', popup=POPcirc) %>%
+  addMarkers(lat=crd.POP$Lat,lng=crd.POP$Long,popup=POP,options=markerOptions(clickable=TRUE)) %>%
+  addMeasure(primaryLengthUnit = "meters", primaryAreaUnit="hectares") %>%
+  addLayersControl(baseGroups = c("MyMapBox","OSM","OpenMapSurfer.Roads"))
 ```
+
 
 Static maps with RgoogleMaps
 -------------------------------   
